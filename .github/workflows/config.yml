@@ -18,25 +18,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install selenium pandas beautifulsoup4 requests
+        pip install selenium pandas beautifulsoup4 requests webdriver_manager
 
-    - name: Download and install Google Chrome 128.0.6613.85
+    - name: Install Google Chrome
       run: |
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         sudo apt-get update
         sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-
-        # Download and install Chrome version 128.0.6613.85
-        wget https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1281280%2Fchrome-linux64.zip?alt=media -O chrome-linux64.zip
-        unzip chrome-linux64.zip
-        sudo mv chrome-linux64 /opt/google/chrome
-        sudo ln -s /opt/google/chrome/chrome /usr/bin/google-chrome
-
-    - name: Move ChromeDriver to /usr/local/bin
-      run: |
-        # Move the uploaded ChromeDriver to /usr/local/bin
-        sudo mv chromedriver /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
 
     - name: Run the script
       run: |
