@@ -82,7 +82,7 @@ def process_task():
 
     # ★★★★★★★★★★★★★★★★ 엑셀파일
     
-    excel_file = '도매토피아_누적데이터.xlsx'
+    excel_file = '도매토피아_누적데이터_test.xlsx'
     df = pd.read_excel(excel_file)
     id_values = df.iloc[:, 0].dropna().tolist()  # NaN 값을 제거하고 리스트로 변환
 
