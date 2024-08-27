@@ -20,7 +20,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install selenium pandas beautifulsoup4 requests
 
-    - name: Install Google Chrome
+    - name: Install Google Chrome 114.x
       run: |
         # Add Google's official GPG key
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -28,19 +28,16 @@ jobs:
         # Add Google Chrome repository
         sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
 
-        # Install Google Chrome
+        # Install Google Chrome 114.x
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        sudo apt-get install -y google-chrome-stable=114.0.5735.199-1
 
-    - name: Install ChromeDriver
+    - name: Install ChromeDriver 114.x
       run: |
-        # Get the version of Google Chrome
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        # Define the ChromeDriver version to match Chrome 114.x
+        CHROME_DRIVER_VERSION=114.0.5735.90
 
-        # Get the matching ChromeDriver version for the current Chrome version
-        CHROME_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-
-        # Download and install ChromeDriver
+        # Download and install ChromeDriver 114.x
         wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/
@@ -49,4 +46,3 @@ jobs:
     - name: Run the script
       run: |
         python dmtopia.py
-
