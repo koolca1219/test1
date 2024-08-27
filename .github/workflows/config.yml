@@ -1,14 +1,13 @@
-name: Dometopia Stock Check
+name: Run Selenium Tests
 
-on:
-  workflow_dispatch:  # 수동 실행을 허용
+on: [push]
 
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -19,16 +18,32 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests pandas openpyxl beautifulsoup4 selenium
+        pip install selenium pandas beautifulsoup4 requests
 
-    - name: Run script
+    - name: Install Google Chrome
       run: |
-        python dmtopia.py  # 루트 디렉토리에 있는 dmtopia.py 파일 실행
+        # Add Google's official GPG key
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 
-    - name: Upload result to repository
+        # Add Google Chrome repository
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+
+        # Install Google Chrome
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Install ChromeDriver
       run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add 도매토피아_크롤링완료_.xlsx
-        git commit -m "Auto-uploaded the crawling results"
-        git push
+        # Get the version of Google Chrome
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+
+        # Install matching ChromeDriver version
+        CHROME_DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+        wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+
+    - name: Run the script
+      run: |
+        python dmtopia.py
