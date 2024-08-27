@@ -14,7 +14,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'  # Python 버전을 필요에 맞게 설정
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
@@ -23,7 +23,7 @@ jobs:
 
     - name: Run script
       run: |
-        dmtopia.py
+        python dmtopia.py  # 루트 디렉토리에 있는 dmtopia.py 파일 실행
 
     - name: Upload result to repository
       run: |
