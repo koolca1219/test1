@@ -37,7 +37,7 @@ jobs:
         # Get the version of Google Chrome
         CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
 
-        # Get the latest ChromeDriver version for the specific Chrome version
+        # Get the matching ChromeDriver version for the current Chrome version
         CHROME_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
 
         # Download and install ChromeDriver
@@ -49,3 +49,4 @@ jobs:
     - name: Run the script
       run: |
         python dmtopia.py
+
