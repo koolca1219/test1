@@ -4,6 +4,7 @@ on:
   schedule:
     # 매일 새벽 2시에 실행 (UTC 기준, 한국 시간은 UTC+9)
     - cron: "0 17 * * *"
+  workflow_dispatch:  # 수동 실행을 허용
 
 jobs:
   run-script:
@@ -25,7 +26,7 @@ jobs:
 
     - name: Run script
       run: |
-        dmtopia.py
+        python main.py
 
     - name: Upload result to repository
       run: |
