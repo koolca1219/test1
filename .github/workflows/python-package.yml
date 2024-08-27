@@ -1,6 +1,9 @@
 name: Daily Crawl
 
+on:
+  
 
+  workflow_dispatch:
 
 jobs:
   run-crawler:
@@ -22,7 +25,7 @@ jobs:
 
     - name: Run the Crawler Script
       run: |
-        python your_script.py  # Replace with the actual script name
+        python dmtopia.py  # Replace with the actual script name
 
     - name: Upload Results
       uses: actions/upload-artifact@v3
