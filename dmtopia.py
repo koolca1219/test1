@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver as wb
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By  # 이 부분을 추가해야 합니다
 from webdriver_manager.chrome import ChromeDriverManager
 import logging
 
