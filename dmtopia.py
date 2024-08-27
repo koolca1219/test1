@@ -8,12 +8,13 @@ from selenium import webdriver as wb
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-import tkinter as tk
-from tkinter import scrolledtext
-import threading
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger()
 
 # 전역 변수로 GUI 업데이트 상태와 스레드
-update_status_event = threading.Event()
 start_time = None
 
 # 진행 상황을 표시할 함수
@@ -21,9 +22,7 @@ def update_status(message):
     elapsed_time = time.time() - start_time
     minutes, seconds = divmod(int(elapsed_time), 60)
     time_str = f"[{minutes:02}:{seconds:02}]"
-    status_text.insert(tk.END, f"{time_str} {message}\n")
-    status_text.yview(tk.END)
-    root.update_idletasks()  # GUI 업데이트
+    logger.info(f"{time_str} {message}")
 
 # 1. Selenium을 사용하여 로그인하고 쿠키 저장
 def login_and_save_cookies():
@@ -70,7 +69,7 @@ def check_stock_status(session, url):
 
 # 4. 진행 중인 작업을 처리할 함수
 def process_task():
-    global status_text, root, start_time
+    global start_time
     
     start_time = time.time()  # 작업 시작 시간 기록
     update_status("Starting process")
@@ -154,19 +153,10 @@ def process_task():
 
 # 5. 메인 함수
 def main():
-    global status_text, root
+    global start_time
     
-    # GUI 초기화
-    root = tk.Tk()
-    root.title("Progress Window")
-
-    status_text = scrolledtext.ScrolledText(root, width=100, height=30)
-    status_text.pack()
-
     # 백그라운드에서 작업 처리
-    threading.Thread(target=process_task).start()
-
-    root.mainloop()
+    process_task()
 
 if __name__ == "__main__":
     main()
