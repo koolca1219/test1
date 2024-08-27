@@ -20,7 +20,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install selenium pandas beautifulsoup4 requests
 
-    - name: Install Google Chrome 114.x
+    - name: Install Google Chrome 128
       run: |
         # Add Google's official GPG key
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -28,18 +28,13 @@ jobs:
         # Add Google Chrome repository
         sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
 
-        # Install Google Chrome 114.x
+        # Install Google Chrome 128
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable=114.0.5735.199-1
+        sudo apt-get install -y google-chrome-stable=128.0.0.0-1
 
-    - name: Install ChromeDriver 114.x
+    - name: Move ChromeDriver to /usr/local/bin
       run: |
-        # Define the ChromeDriver version to match Chrome 114.x
-        CHROME_DRIVER_VERSION=114.0.5735.90
-
-        # Download and install ChromeDriver 114.x
-        wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
+        # Move the uploaded ChromeDriver to /usr/local/bin
         sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
 
