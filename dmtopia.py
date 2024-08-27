@@ -5,28 +5,36 @@ import pandas as pd
 import re
 from bs4 import BeautifulSoup
 from selenium import webdriver as wb
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+import tkinter as tk
+from tkinter import scrolledtext
 import threading
 
-# 전역 변수로 스레드만 남기고 GUI 관련 코드는 제거합니다.
+# 전역 변수로 GUI 업데이트 상태와 스레드
 update_status_event = threading.Event()
 start_time = None
 
-# 진행 상황을 표시할 함수 (터미널 출력용)
+# 진행 상황을 표시할 함수
 def update_status(message):
     elapsed_time = time.time() - start_time
     minutes, seconds = divmod(int(elapsed_time), 60)
     time_str = f"[{minutes:02}:{seconds:02}]"
-    print(f"{time_str} {message}")
+    status_text.insert(tk.END, f"{time_str} {message}\n")
+    status_text.yview(tk.END)
+    root.update_idletasks()  # GUI 업데이트
 
 # 1. Selenium을 사용하여 로그인하고 쿠키 저장
 def login_and_save_cookies():
-    chrome_options = wb.ChromeOptions()
+    chrome_options = Options()
     chrome_options.add_argument('--headless')  # 헤드리스 모드
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
 
-    driver = wb.Chrome(options=chrome_options)
+    # webdriver_manager를 사용하여 ChromeDriver 자동 다운로드 및 설치
+    service = Service(ChromeDriverManager().install())
+    driver = wb.Chrome(service=service, options=chrome_options)
     update_status("Opened login page")
     driver.get("https://www.dometopia.com/member/login")
 
@@ -62,7 +70,7 @@ def check_stock_status(session, url):
 
 # 4. 진행 중인 작업을 처리할 함수
 def process_task():
-    global start_time
+    global status_text, root, start_time
     
     start_time = time.time()  # 작업 시작 시간 기록
     update_status("Starting process")
@@ -73,7 +81,9 @@ def process_task():
     for cookie in cookies:
         session.cookies.set(cookie['name'], cookie['value'], domain=cookie.get('domain'), path=cookie.get('path'))
 
-    excel_file = '도매토피아_누적데이터_test.xlsx'
+    # ★★★★★★★★★★★★★★★★ 엑셀파일
+    
+    excel_file = '도매토피아_누적데이터.xlsx'
     df = pd.read_excel(excel_file)
     id_values = df.iloc[:, 0].dropna().tolist()  # NaN 값을 제거하고 리스트로 변환
 
@@ -144,7 +154,19 @@ def process_task():
 
 # 5. 메인 함수
 def main():
-    process_task()
+    global status_text, root
+    
+    # GUI 초기화
+    root = tk.Tk()
+    root.title("Progress Window")
+
+    status_text = scrolledtext.ScrolledText(root, width=100, height=30)
+    status_text.pack()
+
+    # 백그라운드에서 작업 처리
+    threading.Thread(target=process_task).start()
+
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
